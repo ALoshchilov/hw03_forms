@@ -50,7 +50,7 @@ urlpatterns = [
         ),
         name='password_reset_confirm'
     ),
-        # страница сброса пароля
+    # страница сброса пароля
     path(
         'password_reset/',
         PasswordResetView.as_view(
@@ -76,6 +76,4 @@ urlpatterns = [
         ),
         name='password_change_form'
     ),
-
-
 ]

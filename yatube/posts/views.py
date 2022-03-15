@@ -1,21 +1,22 @@
-from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .models import Group, Post, User
 from .forms import PostForm
 
+
 # Следуем DRY
 def paginate(request, post_list, posts_per_page=10):
     paginator = Paginator(post_list, posts_per_page)
-    page_number = request.GET.get('page') 
+    page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return page_obj
+
 
 def index(request):
     template = 'posts/index.html'
     post_list = Post.objects.all()
-    page_obj = paginate(request, post_list) 
+    page_obj = paginate(request, post_list)
     context = {
         'page_obj': page_obj,
     }
@@ -82,10 +83,10 @@ def post_create(request):
 def post_edit(request, post_id):
     template = 'posts/create_post.html'
     post = get_object_or_404(Post, id=post_id)
-    
+
     # Пользователь может редактировать только свои посты
     if request.user != post.author:
-       return redirect('posts:post_detail', post_id)
+        return redirect('posts:post_detail', post_id)
 
     form = PostForm(request.POST or None, instance=post)
     if form.is_valid():
