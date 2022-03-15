@@ -29,12 +29,14 @@ class TestGroupPaginatorView:
         )
 
     def test_index_paginator_not_in_view_context(self, client, few_posts_with_group):
+        #response = client.get('/')
         response = client.get('/')
         assert isinstance(response.context['page_obj'].paginator, Paginator), (
             'Проверьте, что переменная `paginator` объекта `page_obj` на странице `/` типа `Paginator`'
         )
 
     def test_index_paginator_view(self, client, post_with_group):
+        #response = client.get('/')
         response = client.get('/')
         assert response.status_code != 404, 'Страница `/` не найдена, проверьте этот адрес в *urls.py*'
         assert 'page_obj' in response.context, (
@@ -42,6 +44,7 @@ class TestGroupPaginatorView:
         )
         assert isinstance(response.context['page_obj'], Page), (
             'Проверьте, что переменная `page_obj` на странице `/` типа `Page`'
+            
         )
 
     def test_profile_paginator_view(self, client, few_posts_with_group):

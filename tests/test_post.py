@@ -41,6 +41,7 @@ class TestPostEditView:
             response = client.get(f'/posts/{post_with_group.id}/edit/')
         assert response.status_code != 404, (
             'Страница `/posts/<post_id>/edit/` не найдена, проверьте этот адрес в *urls.py*'
+            f'/posts/{post_with_group.id}/edit/'
         )
 
         assert response.status_code in (301, 302), (
