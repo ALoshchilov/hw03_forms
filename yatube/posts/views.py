@@ -1,102 +1,67 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .models import Group, Post, User
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+
 from .forms import PostForm
+from .models import Group, Post, User
 
 
 # Следуем DRY
 def paginate(request, post_list, posts_per_page=10):
     paginator = Paginator(post_list, posts_per_page)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return page_obj
+    return paginator.get_page(page_number)
 
 
 def index(request):
-    template = 'posts/index.html'
-    post_list = Post.objects.all()
-    page_obj = paginate(request, post_list)
-    context = {
-        'page_obj': page_obj,
-    }
-    return render(request, template, context)
+    return render(
+        request,
+        'posts/index.html',
+        {'page_obj': paginate(request, Post.objects.all())}
+    )
 
 
 def group_posts(request, slug):
-    template = 'posts/group_list.html'
     group = get_object_or_404(Group, slug=slug)
-    post_list = group.posts.all()
-    page_obj = paginate(request, post_list)
-    context = {
-        'group': group,
-        'page_obj': page_obj
-    }
-    return render(request, template, context)
+    return render(
+        request,
+        'posts/group_list.html',
+        {'group': group, 'page_obj': paginate(request, group.posts.all())}
+    )
 
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    post_list = author.posts.all()
-    posts_count = post_list.count()
-    page_obj = paginate(request, post_list)
-    context = {
-        'author': author,
-        'page_obj': page_obj,
-        'posts_count': posts_count,
-    }
-    return render(request, 'posts/profile.html', context)
+    return render(
+        request, 
+        'posts/profile.html',
+        {'author': author, 'page_obj': paginate(request, author.posts.all())}
+    )
 
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    author = post.author
-    posts_count = author.posts.count()
-    context = {
-        'author': author,
-        'post': post,
-        'posts_count': posts_count,
-    }
-    return render(request, 'posts/post_detail.html', context)
+    return render(request, 'posts/post_detail.html', {'post': post})
 
 
 @login_required
 def post_create(request):
-    template = 'posts/create_post.html'
-    form = PostForm(request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            post_obj = Post()
-            post_obj.author = request.user
-            post_obj.text = form.cleaned_data['text']
-            post_obj.group = form.cleaned_data['group']
-            post_obj.save()
-            return redirect('posts:profile', request.user.username)
-
-    context = {
-        'form': form,
-    }
-    return render(request, template, context)
-
+    form = PostForm(request.POST or None)
+    if not form.is_valid():
+        return render(request, 'posts/create_post.html', {'form': form})
+    new_post = form.save(commit=False)
+    new_post.author = request.user
+    new_post.save()
+    return redirect('posts:profile', request.user.username)
+    
 
 @login_required
 def post_edit(request, post_id):
-    template = 'posts/create_post.html'
     post = get_object_or_404(Post, id=post_id)
-
-    # Пользователь может редактировать только свои посты
     if request.user != post.author:
-        return redirect('posts:post_detail', post_id)
-
+        return redirect('posts:post_detail', post_id)    
     form = PostForm(request.POST or None, instance=post)
-    if form.is_valid():
-        post.text = form.cleaned_data['text']
-        post.group = form.cleaned_data['group']
-        post.save()
-        return redirect('posts:post_detail', post_id)
-
-    context = {
-        'form': form,
-        'post': post,
-    }
-    return render(request, template, context)
+    if not form.is_valid():        
+        return render(request, 'posts/create_post.html', {'form': form,'post': post})
+    form.save()
+    return redirect('posts:post_detail', post_id)
