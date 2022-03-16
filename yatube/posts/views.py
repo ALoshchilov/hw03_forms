@@ -33,7 +33,7 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     return render(
-        request, 
+        request,
         'posts/profile.html',
         {'author': author, 'page_obj': paginate(request, author.posts.all())}
     )
@@ -53,15 +53,19 @@ def post_create(request):
     new_post.author = request.user
     new_post.save()
     return redirect('posts:profile', request.user.username)
-    
+
 
 @login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.user != post.author:
-        return redirect('posts:post_detail', post_id)    
+        return redirect('posts:post_detail', post_id)
     form = PostForm(request.POST or None, instance=post)
-    if not form.is_valid():        
-        return render(request, 'posts/create_post.html', {'form': form,'post': post})
+    if not form.is_valid():
+        return render(
+            request,
+            'posts/create_post.html',
+            {'form': form, 'post': post}
+        )
     form.save()
     return redirect('posts:post_detail', post_id)

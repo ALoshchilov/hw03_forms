@@ -33,7 +33,6 @@ class Post(models.Model):
         null=True
     )
 
-
     class Meta:
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
