@@ -15,21 +15,20 @@
     <!-- Подключен файл со стандартными стилями бустрап -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
     <title>
-      {% block title%}
-	      Yatube
-	    {% endblock %}
+        {% block title%}
+            Yatube
+        {% endblock %}
     </title>
   </head>
   <body>
-	  {% include 'includes/header.html' %}
-    <main>
-      
+    {% include 'includes/header.html' %}
+    <main>      
       <div class="container">
-	      {% block content%}
-	        На сим месте будет опубликована статья
+        {% block content%}
+          На сим месте будет опубликована статья
         {% endblock %}
       </div>
     </main>
-	  {% include 'includes/footer.html' %}
+    {% include 'includes/footer.html' %}
   </body>
 </html>

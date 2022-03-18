@@ -30,7 +30,12 @@
             <li class="nav-item">
               <a class="nav-link link-light" href="{% url 'users:logout' %}">Выйти</a>
             </li>
-            <li>Пользователь: {{ user.username }}</li>
+            <li>
+                Пользователь: 
+                <a href="{% url 'posts:profile' user.username %}">
+                    {{ user.username }}        
+                </a>    
+            </li>
           {% else %}
             <li class="nav-item">
               <a class="nav-link  {% if view_name  == 'users:login' %} active {% endif %}  link-light"
@@ -47,7 +52,6 @@
           {% endif %}
         </ul>
       {% endwith %}
-      {# Конец добавленого в спринте #}
     </div>
   </nav>
 </header>
