@@ -12,7 +12,7 @@ class Group(models.Model):
     )
     slug = models.SlugField(
         unique=True,
-        verbose_name = "Код группы"
+        verbose_name="Код группы"
     )
     description = models.TextField(verbose_name='Описание')
 
@@ -25,25 +25,25 @@ class Group(models.Model):
 
 
 class Post(models.Model):
-    text = models.TextField(verbose_name = "Текст поста")
+    text = models.TextField(verbose_name="Текст поста")
     pub_date = models.DateTimeField(
         auto_now_add=True,
-        verbose_name = "Дата публикации"
-        )
+        verbose_name="Дата публикации"
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='posts',
-        verbose_name = "Автор"
-        )
+        verbose_name="Автор"
+    )
     group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,
         related_name='posts',
         blank=True,
         null=True,
-        verbose_name = "Группа"
-        )
+        verbose_name="Группа"
+    )
 
     class Meta:
         verbose_name = "Пост"

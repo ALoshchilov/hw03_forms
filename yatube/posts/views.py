@@ -7,7 +7,7 @@ from .models import Group, Post, User
 
 
 def paginate(request, posts, posts_per_page=10):
-    return Paginator(posts,posts_per_page).get_page(request.GET.get('page'))
+    return Paginator(posts, posts_per_page).get_page(request.GET.get('page'))
 
 
 def index(request):
@@ -27,7 +27,7 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     return render(request, 'posts/profile.html', {
-        'author': author, 
+        'author': author,
         'page_obj': paginate(request, author.posts.all())
     })
 
